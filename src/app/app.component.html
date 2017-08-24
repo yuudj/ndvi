@@ -1,13 +1,12 @@
 <div fxLayout="column" fxFlex [class.dark-theme]="isDarkTheme">
-    <md-toolbar color="primary" class="mat-elevation-z4" style="padding-left:0">
-        <div fxLayout="row" fxLayoutAlign="start center" style="height:100%;width:250px;background-color:rgba(0,0,0,0.1);padding-left:16">
+    <!--LARGE TOOLBAR-->
+    <md-toolbar fxHide fxShow.gt-sm color="primary" class="mat-elevation-z6 app-toolbar">
+        <div fxLayout="row" fxLayoutAlign="start center" class="app-bar" style="width:250px;">
             <button md-icon-button (click)="mainSideNav.toggle()">
                     <md-icon>menu</md-icon>
               </button>
-            <img src="../assets/logo_white.svg" style="height:80%">
-            <span fxLayout="row" fxFlex fxLayoutAlign="center center">
-             {{appName}}
-            </span>
+            <img src="../assets/logo.svg" class="logo">
+            <span fxLayout="row" fxFlex fxLayoutAlign="center center">{{appName}}</span>
         </div>
         <span style="padding-left:16px;">
                 {{(activeMenuItem$ | async)?.title}}
@@ -16,6 +15,19 @@
         <button md-icon-button [mdMenuTriggerFor]="themeMenu">
             <md-icon>more_vert</md-icon>
         </button>
+    </md-toolbar>
+    <!--SMALL TOOLBAR-->
+    <md-toolbar fxHide.gt-sm color="primary" class="mat-elevation-z6 app-toolbar">
+            <div fxLayout="row" fxLayoutAlign="start center" class="app-bar" style="width:100%">
+            <button md-icon-button (click)="mainSideNav.toggle()">
+                <md-icon>menu</md-icon>
+            </button>
+            <img src="../assets/logo.svg" class="logo">
+            <span fxLayout="row" fxFlex fxLayoutAlign="center center">{{appName}}</span>
+            <button md-icon-button [mdMenuTriggerFor]="themeMenu">
+                <md-icon>more_vert</md-icon>
+            </button>
+        </div>
     </md-toolbar>
 
     <md-sidenav-container fxFlex>
@@ -29,7 +41,9 @@
             </md-nav-list>
         </md-sidenav>
         <div fxLayout="column" class="content">
-
+            <md-toolbar [fxHide.gt-sm]="true" color="primary">
+                    {{(activeMenuItem$ | async)?.title}}
+            </md-toolbar>
             <div fxFlex>
                 <router-outlet></router-outlet>
             </div>

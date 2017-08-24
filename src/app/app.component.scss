@@ -1,0 +1,12 @@
+
+.app-toolbar
+{
+    z-index: 100;
+    padding:0;
+    .app-bar{
+        height:100%;background-color:rgba(0,0,0,0.1);padding-left:16;
+        .logo{
+            height:80%
+        }
+    }
+}
