@@ -1,9 +1,15 @@
 # NDVI Time Lapse
 
-Angular 4 page layout using 
-- [Angular Material](https://material.angular.io/)
-- Generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.3.0.
-- Inspired by  [This github repo](https://github.com/michael-lang/sample-ng2-mvc)
+NDVI Time lapse
+- Based on [Angular $ Layout](https://github.com/yuudj/a4Layout) by [@yuudj](https://github.com/yuudj)
+
+## TODO
+- [x] UI Layout
+- [x] Express Server
+- [ ] Business Layer
+- [ ] REST Api
+- [ ] Python scripts
+
 
 ## Express server
 Run `npm run build` =  `ng build && node server.js`
