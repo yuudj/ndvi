@@ -1,41 +1,141 @@
-// Get dependencies
+/*jshint node:true*/
+'use strict';
+const chalk = require('chalk');
 const express = require('express');
-const path = require('path');
-const http = require('http');
-const bodyParser = require('body-parser');
-
-// Get our API routes
-const api = require('./server/routes/api');
-
 const app = express();
+const bodyParser = require('body-parser');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const passport = require('passport');
 
-// Parsers for POST data
+const four0four = require('./server/utils/404')();
+const environment = process.env.NODE_ENV;
+const http = require('http');
+const https = require('https');
+const path = require('path');
+
+var defaultSettings = path.join(__dirname, './server/settings.js');
+
+/**
+ * @description http/s server
+ */
+var server;
+/** 
+ * @description application settings
+*/
+var settings = require(defaultSettings);
+
+settings.settingsFile = defaultSettings;
+
+/**
+ * @description data model
+ */
+require('./server/models/db');
+
+/**
+ *  @description passport autentication middleware
+ */
+var auth = require('./server/authentication');
+
+
+/**
+ *  @description mqtt broker
+ */
+var scheduler = require('./server/scheduler');
+
+try {
+    scheduler.init();
+} catch (err) {
+    console.error('ERROR AL SCHEDULER', err);
+    process.exit(1);
+}
+
+
+
+// http authentication
+if (settings.https) {
+    server = https.createServer(settings.https, function (req, res) { app(req, res); });
+} else {
+    server = http.createServer(function (req, res) { app(req, res); });
+}
+
+server.setMaxListeners(0);
+
+// user authentication
+app.use('/', auth.isAuthenticated);
+
+app.use(favicon(__dirname + '/server/favicon.ico'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+app.use(logger('dev'));
+
+// [SH] Initialise Passport before using the route middleware
+app.use(passport.initialize());
+
 
 // Point static path to dist
 app.use(express.static(path.join(__dirname, 'dist')));
+// API ROUTES
+app.use('/api/plants', require('./server/controllers/plants'));
+app.use('/api/users', require('./server/controllers/users'));
+app.use('/api/status', require('./server/controllers/status'));
+app.use('/api', require('./server/routes'));
 
-// Set our api routes
-app.use('/api', api);
 
-// Catch all other routes and return the index file
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist/index.html'));
+console.log('** BUILD **');
+app.use(express.static('./dist/'));
+// Any invalid calls for templateUrls are under app/* and should return 404
+app.use('/app/*', function (req, res, next) {
+    four0four.send404(req, res);
 });
 
-/**
- * Get port from environment and store in Express.
- */
-const port = process.env.PORT || '3000';
-app.set('port', port);
+// Any deep link calls should return index.html
+app.use('/*', express.static('./dist/index.html'));
 
-/**
- * Create HTTP server.
- */
-const server = http.createServer(app);
+// error de no authorizado
+app.use(function (err, req, res, next) {
+  if (err.name === 'UnauthorizedError') {
+      res.status(401);
+      res.json({ 'message': err.name + ': ' + err.message });
+  }
+  else {
+      console.error(err.stack);
+      res.status(500).send('Algo no funciono bien!');
+  }
+});
 
-/**
- * Listen on provided port, on all network interfaces.
- */
-server.listen(port, () => console.log(`API running on localhost:${port}`));
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+  app.use(function (err, req, res, next) {
+      res.status(err.status || 500);
+      res.render('error', {
+          message: err.message,
+          error: err
+      });
+  });
+}
+
+
+
+
+server.listen(settings.uiPort, function () {
+
+  if (settings.https) {
+      console.log(chalk.bold(chalk.green('Express server listening on port https://localhost:' + settings.uiPort)));
+  }
+  else {
+      console.log(chalk.bold(chalk.green('Express server listening on port http://localhost:' + settings.uiPort)));
+  }
+
+  console.log('env = ' + app.get('env') +
+      '\n__dirname = ' + __dirname +
+      '\nprocess.cwd = ' + process.cwd());
+});
+
+
+var dataInit = require('./server/dataInit');
+dataInit.init();

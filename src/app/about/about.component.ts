@@ -12,7 +12,7 @@ export class AboutComponent implements OnInit {
   private _baseTopic: string;
   public imageData:string;
   public constructor(private domSanitizer: DomSanitizer) {
-    this._baseTopic= "DAF4-48A8";
+    this._baseTopic= "DAF4-48A8-";
     this._client = new Paho.MQTT.Client('iot.eclipse.org', Number(80), '/ws', 'fruta1234567788');
 
     this._client.onConnectionLost = (responseObject: Object) => {
