@@ -3,4 +3,5 @@
   <p>
     about works!
   </p>
+  <img *ngIf="imageData" [src]="domSanitizer.bypassSecurityTrustUrl(imageData)" style="width:auto;height:200px">
 </div>
