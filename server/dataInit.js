@@ -38,7 +38,7 @@ function initPlants() {
                 schedule: {
                     isEnabled: true,
                     cron: '*/5 * * * *',
-                    script: '../scripts/dummy.py'
+                    script: './scripts/dummy.py'
                 }
             });
 
