@@ -9,13 +9,13 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 
-const four0four = require('./server/utils/404')();
+const four0four = require('./utils/404')();
 const environment = process.env.NODE_ENV;
 const http = require('http');
 const https = require('https');
 const path = require('path');
 
-var defaultSettings = path.join(__dirname, './server/settings.js');
+var defaultSettings = path.join(__dirname, './settings.js');
 
 /**
  * @description http/s server
@@ -31,18 +31,18 @@ settings.settingsFile = defaultSettings;
 /**
  * @description data model
  */
-require('./server/models/db');
+require('./models/db');
 
 /**
  *  @description passport autentication middleware
  */
-var auth = require('./server/authentication');
+var auth = require('./authentication');
 
 
 /**
  *  @description mqtt broker
  */
-var scheduler = require('./server/scheduler');
+var scheduler = require('./scheduler');
 
 try {
     scheduler.init();
@@ -65,7 +65,7 @@ server.setMaxListeners(0);
 // user authentication
 app.use('/', auth.isAuthenticated);
 
-app.use(favicon(__dirname + '/server/favicon.ico'));
+app.use(favicon(__dirname + '/favicon.ico'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -77,12 +77,12 @@ app.use(passport.initialize());
 
 
 // Point static path to dist
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
 // API ROUTES
-app.use('/api/plants', require('./server/controllers/plants'));
-app.use('/api/users', require('./server/controllers/users'));
-app.use('/api/status', require('./server/controllers/status'));
-app.use('/api', require('./server/routes'));
+app.use('/api/plants', require('./controllers/plants'));
+app.use('/api/users', require('./controllers/users'));
+app.use('/api/status', require('./controllers/status'));
+app.use('/api', require('./routes'));
 
 
 console.log('** BUILD **');
@@ -137,5 +137,5 @@ server.listen(settings.uiPort, function () {
 });
 
 
-var dataInit = require('./server/dataInit');
+var dataInit = require('./dataInit');
 dataInit.init();
