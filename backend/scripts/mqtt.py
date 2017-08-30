@@ -2,7 +2,14 @@ import cv2
 import sys
 import base64
 import paho.mqtt.client as mqtt
-baseTopic="DAF4-48A8"
+from Crypto import Random
+from Crypto.Cipher import AES
+
+baseTopic="DAF4-48A8-"
+
+def encrypt_node(data, key='8'*32, iv='8'*16):
+    aes = AES.new(key, AES.MODE_CBC, iv)
+    return aes.encrypt(pad(data)).encode('hex')
 
 def capture(client):
     # video on

@@ -1,40 +1,36 @@
 
 const mongoose = require('mongoose');
 const cron = require('node-cron');
-var PythonShell = require('python-shell');
 const Plant = mongoose.model('Plants');
 var tasks = [];
 
 
 function init() {
-    Plant.find({}, function (err, plants) {
-        if (err) {
-            console.error('Error al inicializar plantas', err);
-            return;
-        }
 
-        
+    Plant
+        .find()
+        .exec(function (error, plants) {
+            plants.forEach(function (plant) {
+                schedulePlant(plant);
+            }, this);
+        });
 
-        plants.forEach(function (plant) {
-            schedulePlant(plant);
-        }, this);
-
-        console.info('Scheduler inicializado');
-    });
 }
 
 
 function schedulePlant(plantDef) {
+    if (plantDef._doc) {
+        plantDef = plantDef._doc;
+    }
+
     try {
-        if (plantDef._doc) {
-            plantDef = plantDef._doc;
-        }
+
 
         if (plantDef.schedule.isEnabled) {
             var task = cron.schedule(plantDef.schedule.cron, function () {
                 try {
                     console.info('EJECUTANDO SCHEDULE PLANTA ' + plantDef._id);
-                    executeScript(plantDef.schedule.script);
+                    execute(plantDef._id);
                 }
                 catch (error) {
 
@@ -48,19 +44,20 @@ function schedulePlant(plantDef) {
 
         }
     } catch (error) {
-        console.error('ERROR AL INICIALIZAR SCHEDULER');
+        console.error('ERROR ECHDULING PLANT ID', plantDef._id);
     }
 
 }
 
-function executeScript(script) {
-    PythonShell.run(script,{scriptPath: 'D:/WorkingFolder/TFS_CLOUD/FACU/ndvi/trunk/src/server/scripts'}, 
-    function (err) {
-        if (err) {
-             console.error('EJECUTANDO SCRIPT ', err);
-        }
-
-    });
+function execute(plant_id) {
+    Plants
+        .findOne({ _id: plant_id })
+        .populate('cameras')
+        .exec(function (error, plant) {
+            plant.camera.forEach(function (plant) {
+                // RUN MQTT COMMAND
+            }, this);
+        });
 }
 
 /**
@@ -75,36 +72,15 @@ function unSchedulePlant(id) {
     }
 }
 
-/**
- * deshabilita un elemento
- * @param {*} id identificador del elemento
- */
-function disable(id) {
-    const Jobs = mongoose.model('Jobs');
-
-    Jobs.update({ '_id': id }, {
-        '$set': {
-            'isEnabled': false
-        }
-    }, { new: true }, function (err, doc) {
-        if (err) {
-            throw err;
-        }
-
-        var index = tasks.findIndex(function (entity) { return entity._id === id; });
-
-        if (index >= 0) {
-            var element = tasks.splice(index, 1);
-            element[0].stop();
-        }
-    });
+function rebuild(){
+    tasks.forEach(task=> task.stop());
+    tasks=[];
+    init();
 }
 
 
-
-
-
 module.exports.init = init;
-module.exports.disable = disable;
+module.exports.rebuild = rebuild;
+
 
 

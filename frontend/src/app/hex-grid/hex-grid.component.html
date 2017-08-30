@@ -11,9 +11,9 @@
   <li class="hex">
     <div class="hexIn">
       <a class="hexLink" href="#">
-        <img src="https://farm5.staticflickr.com/4144/5053682635_b348b24698.jpg" alt="" />
-        <h1>This is a title</h1>
-        <p>Some sample text about the article this hexagon leads to</p>
+         <img *ngIf="imageData" [src]="domSanitizer.bypassSecurityTrustUrl(imageData)">
+        <h1>Live Image</h1>
+        <p>Live image from MQTT</p>
       </a>
     </div>
   </li>

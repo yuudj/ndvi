@@ -76,9 +76,9 @@ app.use(logger('dev'));
 app.use(passport.initialize());
 
 
-// Point static path to dist
-console.log(chalk.blue('STATIC FILES FROM ', path.join(__dirname, '../frontend/dist')));
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+
+//app.use(express.static(settings.frontEnd));
 // API ROUTES
 app.use('/api/plants', require('./controllers/plants'));
 app.use('/api/users', require('./controllers/users'));
@@ -86,15 +86,16 @@ app.use('/api/status', require('./controllers/status'));
 app.use('/api', require('./routes'));
 
 
-console.log('** BUILD **');
-app.use(express.static('./dist/'));
+// Point static path to dist
+console.log(chalk.blue('STATIC FILES FROM ', settings.frontEnd));
+app.use(express.static(settings.frontEnd));
 // Any invalid calls for templateUrls are under app/* and should return 404
 app.use('/app/*', function (req, res, next) {
     four0four.send404(req, res);
 });
 
 // Any deep link calls should return index.html
-app.use('/*', express.static('./dist/index.html'));
+app.use('/*', express.static(settings.frontEnd + '/index.html'));
 
 // error de no authorizado
 app.use(function (err, req, res, next) {
