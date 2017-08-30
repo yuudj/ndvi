@@ -6,12 +6,7 @@
   "repository": "https://github.com/yuudj/ndvi",
   "description": "NDVI Time Lapse proyect using Angular 4 + Express + MongoDB + Python + Raspberry PI",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e"
+    "start": "node server.js"
   },
   "private": true,
   "dependencies": {

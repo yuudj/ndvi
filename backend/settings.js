@@ -21,8 +21,8 @@ module.exports = {
     // this setting.
     //
     https: {
-        key: fs.readFileSync('./server/cert/key.pem'),
-        cert: fs.readFileSync('./server/cert/cert.pem')
+        key: fs.readFileSync('./cert/key.pem'),
+        cert: fs.readFileSync('./cert/cert.pem')
     },
     mongo: {
         dbURI: process.env.MONGOLAB_URI || 'mongodb://localhost/NDVI',

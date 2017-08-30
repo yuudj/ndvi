@@ -77,6 +77,7 @@ app.use(passport.initialize());
 
 
 // Point static path to dist
+console.log(chalk.blue('STATIC FILES FROM ', path.join(__dirname, '../frontend/dist')));
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
 // API ROUTES
 app.use('/api/plants', require('./controllers/plants'));
