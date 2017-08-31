@@ -7,13 +7,12 @@ module.exports = {
     uiPort: process.env.PORT || 8003,
 
     frontEnd: path.join(__dirname, '../frontend/dist'),
-    // By default, the app will accepts connections on all IPv4 interfaces.
-    // The following property can be used to listen on a specific interface. For
-    // example, the following would only allow connections from the local machine.
-    //uiHost: "127.0.0.1",
+    //MQTT CLIENT OPTIONS https://www.npmjs.com/package/mqtt#client
     mqttClient: {
         // Retry time in milliseconds for MQTT connections
-        reconnectTime: 15000
+        host : '',
+        options
+        //auth:{user:'', pass:''}
     },
 
     // The following property can be used to enable HTTPS

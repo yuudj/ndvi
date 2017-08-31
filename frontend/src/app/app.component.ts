@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import { Router, NavigationEnd } from '@angular/router';
 import { MdSidenav } from '@angular/material';
 import { AppToolbarService, MenuItem } from './app-toolbar/app-toolbar.service';
-
+import { Ng2LetterAvatar } from "ng2letteravatar/ng2letteravatar";
 @Component({
     selector: 'body',
     templateUrl: './app.component.html',
@@ -12,6 +12,7 @@ import { AppToolbarService, MenuItem } from './app-toolbar/app-toolbar.service';
 export class AppComponent implements AfterViewInit {
     appName = 'NDVI';
     isDarkTheme = true;
+    userName='rbrea';
     mainMenuItems;
     activeMenuItem$: Observable<MenuItem>;
     @ViewChildren("mainSideNav") sidebar: QueryList<MdSidenav>;
@@ -19,7 +20,7 @@ export class AppComponent implements AfterViewInit {
     constructor(private router: Router, private toolbarService: AppToolbarService) {
         this.mainMenuItems = this.toolbarService.getMenuItems();
         this.activeMenuItem$ = this.toolbarService.activeMenuItem$;
-
+        
         this.router.events
             .subscribe((event) => {
                 if (event instanceof NavigationEnd && this.sidebar) {
