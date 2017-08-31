@@ -9,9 +9,12 @@ module.exports = {
     frontEnd: path.join(__dirname, '../frontend/dist'),
     //MQTT CLIENT OPTIONS https://www.npmjs.com/package/mqtt#client
     mqttClient: {
+        http: {
+            host: '',
+            options: {}
+        }
         // Retry time in milliseconds for MQTT connections
-        host : '',
-        options
+
         //auth:{user:'', pass:''}
     },
 
@@ -27,7 +30,7 @@ module.exports = {
     },
     mongo: {
         dbURI: process.env.MONGOLAB_URI || 'mongodb://localhost/NDVI',
-        dbAuth : {
+        dbAuth: {
             useMongoClient: true,
             //user: dbUser,
             //pass: dbPass
